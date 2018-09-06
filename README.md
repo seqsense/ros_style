@@ -7,8 +7,8 @@ Use clang-format 3.7 and `.clang-format` in this repository.
 
 ### building clang-format 3.7
 
-```
-$ cd ~/Download
+```shell
+$ cd ~/Downloads  # change as you like
 $ wget http://releases.llvm.org/3.7.1/llvm-3.7.1.src.tar.xz
 $ tar xJfv llvm-3.7.1.src.tar.xz
 $ cd llvm-3.7.1.src/tools
