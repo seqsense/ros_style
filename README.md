@@ -5,6 +5,13 @@
 Use clang-format 3.7 and `.clang-format` in this repository.
 (later clang-format has a bug around lambda functions)
 
+Make symlink to .clang-format file in your workspace directory.
+```shell
+$ ln -s /path/to/ros_style/.clang-format /path/to/your/workspace/
+```
+
+The cpp codes must be checked by [roslint cpplint](http://wiki.ros.org/roslint).
+
 ### building clang-format 3.7
 
 ```shell
@@ -23,3 +30,8 @@ $ sudo cp bin/clang-format /usr/local/bin/
 ```
 
 clang-format is installed under /usr/local/bin.
+
+### note
+
+Line length limit (ColumnLimit) is disabled in this config.
+Please check it by using [roslint cpplint](http://wiki.ros.org/roslint).
