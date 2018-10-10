@@ -1,5 +1,13 @@
 # ros_style
 
+## python
+
+### Usage
+
+```shell
+$ yapf --recursive --in-place --parallel $DIR (Specify a target directory)
+```
+
 ## cpp
 
 Use clang-format 3.7 and `.clang-format` in this repository.
