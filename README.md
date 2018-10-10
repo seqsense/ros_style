@@ -4,7 +4,9 @@
 
 ### Usage
 
+```shell
 $ yapf --recursive --in-place --parallel $DIR (Specify a target directory)
+```
 
 ## cpp
 
