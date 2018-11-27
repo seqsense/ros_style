@@ -20,7 +20,7 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: false
-DerivePointerBinding: true
+DerivePointerAlignment: false
 ExperimentalAutoDetectBinPacking: false
 IndentCaseLabels: true
 IndentFunctionDeclarationAfterType: false
@@ -34,7 +34,7 @@ PenaltyBreakFirstLessLess: 1000
 PenaltyBreakString: 1
 PenaltyExcessCharacter: 1000
 PenaltyReturnTypeOnItsOwnLine: 90
-PointerBindsToType: false
+PointerAlignment: Left
 SpaceAfterControlStatementKeyword: true
 SpaceBeforeAssignmentOperators: true
 SpaceInEmptyParentheses: false
