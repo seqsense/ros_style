@@ -41,7 +41,6 @@ SpacesBeforeTrailingComments: 2
 SpacesInAngles: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
-Standard: Auto
 Standard: Cpp11
 TabWidth: 2
 UseTab: Never
