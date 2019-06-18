@@ -11,7 +11,7 @@ $ yapf --recursive --in-place --parallel $DIR (Specify a target directory)
 ## cpp
 
 Use clang-format 3.7 and `.clang-format` in this repository.
-(later clang-format has a bug around lambda functions)
+(later clang-format has [the bug](https://www.mail-archive.com/llvm-bugs@lists.llvm.org/msg05471.html) around lambda functions)
 
 Make symlink to .clang-format file in your workspace directory.
 ```shell
