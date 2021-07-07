@@ -18,7 +18,7 @@ ColumnLimit: 0
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 2
 ContinuationIndentWidth: 4
-Cpp11BracedListStyle: false
+Cpp11BracedListStyle: true
 DerivePointerAlignment: false
 ExperimentalAutoDetectBinPacking: false
 IncludeBlocks: Preserve
