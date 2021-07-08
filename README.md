@@ -10,8 +10,12 @@ $ yapf --recursive --in-place --parallel $DIR (Specify a target directory)
 
 ## cpp
 
-Use clang-format 3.7 and `.clang-format` in this repository.
-(later clang-format has [the bug](https://www.mail-archive.com/llvm-bugs@lists.llvm.org/msg05471.html) around lambda functions)
+Use clang-format 11 and `.clang-format` in this repository.
+You can install clang-format 11 with apt if you are using Ubuntu 20.04.
+```
+$ sudo apt install clang-format-11
+```
+
 
 Make symlink to .clang-format file in your workspace directory.
 ```shell
@@ -20,26 +24,33 @@ $ ln -s /path/to/ros_style/.clang-format /path/to/your/workspace/
 
 The cpp codes must be checked by [roslint cpplint](http://wiki.ros.org/roslint).
 
-### building clang-format 3.7
+### Notes
 
-```shell
-$ cd ~/Downloads  # change as you like
-$ wget http://releases.llvm.org/3.7.1/llvm-3.7.1.src.tar.xz
-$ tar xJfv llvm-3.7.1.src.tar.xz
-$ cd llvm-3.7.1.src/tools
-$ wget http://releases.llvm.org/3.7.1/cfe-3.7.1.src.tar.xz
-$ tar xJfv cfe-3.7.1.src.tar.xz
-$ cd ..
-$ mkdir build
-$ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release
-$ make clang-format
-$ sudo cp bin/clang-format /usr/local/bin/
+- Formatting of initializer list
+
+When you want to put only one element per line, please add comma after the last element to format them correctly.
+
+
+With last comma:
+```
+  std::vector<int> a =
+      {
+          1,
+          2,
+          3,
+      };
 ```
 
-clang-format is installed under /usr/local/bin.
+Without last comma:
+```
+  std::vector<int> a =
+      {
+          1,
+          2,
+          3};
+```
 
-### note
+- Line length limit
 
-Line length limit (ColumnLimit) is disabled in this config.
+`ColumnLimit` parameter is disabled in this config.
 Please check it by using [roslint cpplint](http://wiki.ros.org/roslint).
