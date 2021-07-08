@@ -48,7 +48,7 @@ With last comma:
 ```
 
 Without last comma:
-```
+```cpp
   std::vector<int> a =
       {
           1,
