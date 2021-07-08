@@ -38,7 +38,7 @@ When you want to put only one element per line, please add a comma after the las
 
 
 With last comma:
-```
+```cpp
   std::vector<int> a =
       {
           1,
