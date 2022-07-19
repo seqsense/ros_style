@@ -3,5 +3,5 @@ def function(x: int) -> str:
 
 
 class Foo:
-    def bar() -> None:
+    def bar(x: int) -> None:
         pass
