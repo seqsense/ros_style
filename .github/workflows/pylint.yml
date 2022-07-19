@@ -40,7 +40,7 @@ jobs:
 
           cmd="flake8 --count --show-source --statistics"
 
-          files_to_check=${{ inputs.files }}
+          files_to_check="${{ inputs.files }}"
           if [ -z ${files_to_check} ]; then
             files_to_check=$(find . -type f -not -path '*/\.git/*' -not -path '*/__pycache__/*' -not -path '*/\.mypy_cache/*')
           fi
@@ -91,7 +91,7 @@ jobs:
 
           cmd="mypy --config-file mypy.ini --scripts-are-modules"
 
-          files_to_check=${{ inputs.files }}
+          files_to_check="${{ inputs.files }}"
           if [ -z ${files_to_check} ]; then
             files_to_check=$(find . -type f -not -path '*/\.git/*' -not -path '*/__pycache__/*' -not -path '*/\.mypy_cache/*')
           fi
