@@ -44,13 +44,15 @@ jobs:
             files_to_check=$(find . -name "*.cpp" -o -name "*.h")
           fi
 
-          clang-format \
-              --style=file --dry-run --Werror \
-              ${files_to_check} \
-              2>&1 > /dev/null \
-            | sed ':l; N; /\n\S\+:[0-9]\+:[0-9]\+: error: /b l; N; s/\n/%0A/g' \
-            | sed 's/^\([^:]\+\):\([0-9]\+\):\([0-9]\+\): error: \+\(.*\)/::error file=\1,line=\2,col=\3::\4/' \
-            && echo "::set-output name=passed::true" \
+          (
+            set -eo pipefail
+            clang-format \
+                --style=file --dry-run --Werror \
+                ${files_to_check} \
+                2>&1 > /dev/null \
+              | sed ':l; N; /\n\S\+:[0-9]\+:[0-9]\+: error: /b l; N; s/\n/%0A/g' \
+              | sed 's/^\([^:]\+\):\([0-9]\+\):\([0-9]\+\): error: \+\(.*\)/::error file=\1,line=\2,col=\3::\4/'
+          ) && echo "::set-output name=passed::true" \
             || (echo "::set-output name=passed::false"; exit 1)
   roslint-cpplint:
     runs-on: ubuntu-latest
@@ -76,10 +78,12 @@ jobs:
             files_to_check=$(find . -name "*.cpp" -o -name "*.h")
           fi
 
-          roslint-cpplint \
-              --filter=-runtime/references,-build/c++11 \
-              ${files_to_check} \
-              2>&1 > /dev/null \
-            | sed 's/^\([^:]\+\):\([0-9]\+\):\s\+\(.*\)/::error file=\1,line=\2::\3/' \
-            && echo "::set-output name=passed::true" \
+          (
+            set -eo pipefail
+            roslint-cpplint \
+                --filter=-runtime/references,-build/c++11 \
+                ${files_to_check} \
+                2>&1 > /dev/null \
+              | sed 's/^\([^:]\+\):\([0-9]\+\):\s\+\(.*\)/::error file=\1,line=\2::\3/'
+          ) && echo "::set-output name=passed::true" \
             || (echo "::set-output name=passed::false"; exit 1)
