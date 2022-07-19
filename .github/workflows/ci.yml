@@ -7,12 +7,12 @@ on:
 
 jobs:
   python-pass:
-    uses: ./.github/workflows/pylint.yml
+    uses: ./.github/workflows/python.yml
     with:
       style-branch: ${{ github.head_ref }}
       files: ./test/pass.py
   python-fail:
-    uses: ./.github/workflows/pylint.yml
+    uses: ./.github/workflows/python.yml
     with:
       style-branch: ${{ github.head_ref }}
       continue-on-error: true
