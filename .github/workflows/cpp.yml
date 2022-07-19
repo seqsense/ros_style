@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  workflow_call:
+    inputs:
+      style-branch:
+        type: string
+        default: master
+      continue-on-error:
+        type: boolean
+        default: false
+      files:
+        type: string
+    outputs:
+      passed-clang-format:
+        value: ${{ jobs.clang-format.outputs.passed }}
+      passed-roslint:
+        value: ${{ jobs.roslint.outputs.passed }}
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.check.outputs.passed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install tools
+        run: |
+          sudo apt-get install -y clang-format-11
+          curl -LOJ https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.clang-format
+      - name: Format
+        id: check
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          set -eo pipefail
+          clang-format \
+              --style=file --dry-run --Werror \
+              $(find . -name "*.cpp" -o -name "*.h" | grep -v '/pcl/') \
+              2>&1 > /dev/null \
+            | sed ':l; N; /\n\S\+:[0-9]\+:[0-9]\+: error: /b l; N; s/\n/%0A/g' \
+            | sed 's/^\([^:]\+\):\([0-9]\+\):\([0-9]\+\): error: \+\(.*\)/::error file=\1,line=\2,col=\3::\4/' \
+            && echo "::set-output name=passed::true" \
+            || (echo "::set-output name=passed::false"; exit 1)
+  roslint-cpplint:
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.check.outputs.passed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install tools
+        run: sudo pip3 install --upgrade git+https://github.com/at-wat/roslint-pip
+      - name: Lint
+        id: check
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          set -eo pipefail
+          roslint-cpplint \
+              --filter=-runtime/references,-build/c++11 \
+              $(find . -name "*.cpp" -o -name "*.h" | grep -v '/pcl/') \
+              2>&1 > /dev/null \
+            | sed 's/^\([^:]\+\):\([0-9]\+\):\s\+\(.*\)/::error file=\1,line=\2::\3/' \
+            && echo "::set-output name=passed::true" \
+            || (echo "::set-output name=passed::false"; exit 1)
