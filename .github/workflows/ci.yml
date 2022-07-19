@@ -1,0 +1,13 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  python-pass:
+    uses: ./.github/workflow/pylint.yml
+    with:
+      style-branch: ${{ github.head_ref }}
+      files: ./test/pass.py

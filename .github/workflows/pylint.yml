@@ -1,0 +1,102 @@
+on:
+  workflow_call:
+    inputs:
+      style-branch:
+        type: string
+        default: master
+      continue-on-error:
+        type: boolean
+        default: false
+      files:
+        type: string
+
+jobs:
+  lint-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9.5'
+          architecture: x64
+      - name: Install flake8 and plugins
+        run: pip install flake8-annotations==2.6.2 flake8-black==0.3.3 flake8-isort==4.1.1
+      - name: Run flake8
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.flake8
+          curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
+
+          cmd="flake8 --count --show-source --statistics"
+
+          files_to_check=${{ inputs.files }}
+          if [ -z ${files_to_check} ]; then
+            files_to_check=$(find . -type f -not -path '*/\.git/*' -not -path '*/__pycache__/*' -not -path '*/\.mypy_cache/*')
+          fi
+
+          exit_code=0
+
+          for file in ${files_to_check}; do
+            filetype=$(file -b --mime-type ${file})
+            if echo ${filetype} | grep -qE "text/x-python"; then
+              echo "checking ${file}"
+              ${cmd} ${file} \
+                | sed 's|^\(\S\+\):\([0-9]\+\):\([0-9]\+\): \(.*\)$|::error file=\1,line=\2,col=\3::\4\n\0|'
+              exit_code=$(($exit_code | ${PIPESTATUS[0]}))
+            fi
+          done
+
+          exit $exit_code
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9.5'
+          architecture: x64
+      - name: Install mypy
+        run: pip install mypy==0.950
+      - name: Run mypy
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/mypy.ini
+
+          # workaround to get mypy to figure out the types it should install
+          mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
+          mypy --install-types --non-interactive
+
+          cmd="mypy --config-file mypy.ini --scripts-are-modules"
+
+          files_to_check=${{ inputs.files }}
+          if [ -z ${files_to_check} ]; then
+            files_to_check=$(find . -type f -not -path '*/\.git/*' -not -path '*/__pycache__/*' -not -path '*/\.mypy_cache/*')
+          fi
+
+          python_files=()
+
+          for file in ${files_to_check}; do
+            filetype=$(file -b --mime-type ${file})
+            if echo ${filetype} | grep -qE "text/x-python"; then
+              python_files+=(${file})
+            fi
+          done
+          echo "checking ${python_files[@]}"
+          output="$(${cmd} ${python_files[@]} | tee /dev/stderr)"
+          result="$(echo "${output}" | tail -n 1)"
+
+          echo "${output}" | sed -n 's|^\(\S\+\):\([0-9]\+\):\([0-9]\+\): error: \(.*\)$|::error file=\1,line=\2,col=\3::\4|p'
+
+          if [[ -n "$result" ]]; then
+            error="$(echo $result | awk '/^Found/{print $2}')"
+            if [[ -z "$error" ]]; then
+              exit 0
+            fi
+          fi
+          exit 1
