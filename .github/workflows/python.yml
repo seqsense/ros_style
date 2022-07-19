@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - uses: actions/setup-python@v3
         with:
           python-version: '3.9.5'
@@ -73,6 +75,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - uses: actions/setup-python@v3
         with:
           python-version: '3.9.5'

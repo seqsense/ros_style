@@ -25,6 +25,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - name: Install tools
         run: |
           sudo apt-get install -y clang-format-11
@@ -34,9 +38,15 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           set -eo pipefail
+
+          files_to_check="${{ inputs.files }}"
+          if [ -z ${files_to_check} ]; then
+            files_to_check=$(find . -name "*.cpp" -o -name "*.h")
+          fi
+
           clang-format \
               --style=file --dry-run --Werror \
-              $(find . -name "*.cpp" -o -name "*.h" | grep -v '/pcl/') \
+              ${files_to_check} \
               2>&1 > /dev/null \
             | sed ':l; N; /\n\S\+:[0-9]\+:[0-9]\+: error: /b l; N; s/\n/%0A/g' \
             | sed 's/^\([^:]\+\):\([0-9]\+\):\([0-9]\+\): error: \+\(.*\)/::error file=\1,line=\2,col=\3::\4/' \
@@ -49,6 +59,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - name: Install tools
         run: sudo pip3 install --upgrade git+https://github.com/at-wat/roslint-pip
       - name: Lint
@@ -56,9 +70,15 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           set -eo pipefail
+
+          files_to_check="${{ inputs.files }}"
+          if [ -z ${files_to_check} ]; then
+            files_to_check=$(find . -name "*.cpp" -o -name "*.h")
+          fi
+
           roslint-cpplint \
               --filter=-runtime/references,-build/c++11 \
-              $(find . -name "*.cpp" -o -name "*.h" | grep -v '/pcl/') \
+              ${files_to_check} \
               2>&1 > /dev/null \
             | sed 's/^\([^:]\+\):\([0-9]\+\):\s\+\(.*\)/::error file=\1,line=\2::\3/' \
             && echo "::set-output name=passed::true" \
