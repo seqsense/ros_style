@@ -11,3 +11,45 @@ jobs:
     with:
       style-branch: ${{ github.head_ref }}
       files: ./test/pass.py
+  python-fail:
+    uses: ./.github/workflows/pylint.yml
+    with:
+      style-branch: ${{ github.head_ref }}
+      continue-on-error: true
+      files: ./test/fail.py
+  python-fail-lint:
+    needs: python-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case ${{ needs.python-fail.outputs.passed-lint }} in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-lint }}"
+            exit 1
+            ;;
+          esac
+  python-fail-typecheck:
+    needs: python-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case ${{ needs.python-fail.outputs.passed-typecheck }} in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-typecheck }}"
+            exit 1
+            ;;
+          esac
