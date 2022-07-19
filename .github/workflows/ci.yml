@@ -1,0 +1,100 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  python-pass:
+    uses: ./.github/workflows/python.yml
+    with:
+      style-branch: ${{ github.head_ref }}
+      files: ./test/pass.py
+  python-fail:
+    uses: ./.github/workflows/python.yml
+    with:
+      style-branch: ${{ github.head_ref }}
+      continue-on-error: true
+  python-fail-lint:
+    needs: python-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case "${{ needs.python-fail.outputs.passed-lint }}" in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-lint }}"
+            exit 1
+            ;;
+          esac
+  python-fail-typecheck:
+    needs: python-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case "${{ needs.python-fail.outputs.passed-typecheck }}" in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-typecheck }}"
+            exit 1
+            ;;
+          esac
+  cpp-pass:
+    uses: ./.github/workflows/cpp.yml
+    with:
+      style-branch: ${{ github.head_ref }}
+      files: ./test/pass.cpp
+  cpp-fail:
+    uses: ./.github/workflows/cpp.yml
+    with:
+      style-branch: ${{ github.head_ref }}
+      continue-on-error: true
+  cpp-fail-clang-format:
+    needs: cpp-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case "${{ needs.cpp-fail.outputs.passed-clang-format }}" in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.cpp-fail.outputs.passed-clang-format }}"
+            exit 1
+            ;;
+          esac
+  cpp-fail-roslint:
+    needs: cpp-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case "${{ needs.cpp-fail.outputs.passed-roslint }}" in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.cpp-fail.outputs.passed-roslint }}"
+            exit 1
+            ;;
+          esac
