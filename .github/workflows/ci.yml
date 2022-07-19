@@ -7,7 +7,7 @@ on:
 
 jobs:
   python-pass:
-    uses: ./.github/workflow/pylint.yml
+    uses: ./.github/workflows/pylint.yml
     with:
       style-branch: ${{ github.head_ref }}
       files: ./test/pass.py
