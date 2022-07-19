@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Check
         run: |
-          case ${{ needs.python-fail.outputs.passed-lint }} in
+          case "${{ needs.python-fail.outputs.passed-lint }}" in
           true)
             echo "::error::Unexpected success"
             exit 1
@@ -40,7 +40,7 @@ jobs:
     steps:
       - name: Check
         run: |
-          case ${{ needs.python-fail.outputs.passed-typecheck }} in
+          case "${{ needs.python-fail.outputs.passed-typecheck }}" in
           true)
             echo "::error::Unexpected success"
             exit 1
@@ -68,7 +68,7 @@ jobs:
     steps:
       - name: Check
         run: |
-          case ${{ needs.cpp-fail.outputs.passed-clang-format }} in
+          case "${{ needs.cpp-fail.outputs.passed-clang-format }}" in
           true)
             echo "::error::Unexpected success"
             exit 1
@@ -86,7 +86,7 @@ jobs:
     steps:
       - name: Check
         run: |
-          case ${{ needs.cpp-fail.outputs.passed-roslint }} in
+          case "${{ needs.cpp-fail.outputs.passed-roslint }}" in
           true)
             echo "::error::Unexpected success"
             exit 1
