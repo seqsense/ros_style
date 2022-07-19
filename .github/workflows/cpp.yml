@@ -54,7 +54,7 @@ jobs:
               | sed 's/^\([^:]\+\):\([0-9]\+\):\([0-9]\+\): error: \+\(.*\)/::error file=\1,line=\2,col=\3::\4/'
           ) && echo "::set-output name=passed::true" \
             || (echo "::set-output name=passed::false"; exit 1)
-  roslint-cpplint:
+  roslint:
     runs-on: ubuntu-latest
     outputs:
       passed: ${{ steps.check.outputs.passed }}
