@@ -9,7 +9,7 @@ on:
       continue-on-error:
         type: boolean
         default: false
-      cpplint-opts:
+      cpp-roslint-opts:
         type: string
         default: --filter=-runtime/references,-build/c++11
       files:
@@ -84,7 +84,7 @@ jobs:
           (
             set -eo pipefail
             roslint-cpplint \
-                ${{ inputs.cpplint-opts }} \
+                ${{ inputs.cpp-roslint-opts-opts }} \
                 ${files_to_check} \
                 2>&1 > /dev/null \
               | sed 's/^\([^:]\+\):\([0-9]\+\):\s\+\(.*\)/::error file=\1,line=\2::\3/'
