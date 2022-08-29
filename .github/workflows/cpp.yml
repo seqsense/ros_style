@@ -88,7 +88,7 @@ jobs:
           (
             set -eo pipefail
             roslint-cpplint \
-                ${{ inputs.cpp-roslint-opts-opts }} \
+                ${{ inputs.cpp-roslint-opts }} \
                 ${files_to_check} \
                 2>&1 > /dev/null \
               | sed 's/^\([^:]\+\):\([0-9]\+\):\s\+\(.*\)/::error file=\1,line=\2::\3/'
