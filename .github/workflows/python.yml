@@ -7,6 +7,9 @@ on:
       continue-on-error:
         type: boolean
         default: false
+      run-typecheck:
+        type: boolean
+        default: true
       files:
         type: string
     outputs:
@@ -68,8 +71,9 @@ jobs:
           exit $exit_code
   typecheck:
     runs-on: ubuntu-latest
+    if: ${{ inputs.run-typecheck }}
     outputs:
-      passed: ${{ steps.check.outputs.passed }}
+      passed: ${{ inputs.run-typecheck == 'false' || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
