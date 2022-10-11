@@ -7,6 +7,9 @@ on:
       continue-on-error:
         type: boolean
         default: false
+      run-typecheck:
+        type: boolean
+        default: true
       files:
         type: string
     outputs:
@@ -32,7 +35,10 @@ jobs:
           python-version: '3.9.5'
           architecture: x64
       - name: Install flake8 and plugins
-        run: pip install --disable-pip-version-check flake8-annotations==2.6.2 flake8-black==0.3.3 flake8-isort==4.1.1
+        run: pip install --disable-pip-version-check flake8-black==0.3.3 flake8-isort==4.1.1
+      - name: Install flake8-annotations
+        if: inputs.run-typecheck
+        run: pip install --disable-pip-version-check flake8-annotations==2.6.2
       - name: Run flake8
         id: check
         continue-on-error: ${{ inputs.continue-on-error }}
@@ -68,8 +74,9 @@ jobs:
           exit $exit_code
   typecheck:
     runs-on: ubuntu-latest
+    if: inputs.run-typecheck
     outputs:
-      passed: ${{ steps.check.outputs.passed }}
+      passed: ${{ inputs.run-typecheck == 'false' || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
