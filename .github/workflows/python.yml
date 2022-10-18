@@ -60,9 +60,9 @@ jobs:
           done
 
           if [ ${exit_code} -eq 0 ]; then
-            echo "::set-output name=passed::true"
+            echo "passed=true" >> ${GITHUB_OUTPUT}
           else
-            echo "::set-output name=passed::false"
+            echo "passed=false" >> ${GITHUB_OUTPUT}
           fi
 
           exit $exit_code
@@ -117,9 +117,9 @@ jobs:
           if [[ -n "$result" ]]; then
             error="$(echo $result | awk '/^Found/{print $2}')"
             if [[ -z "$error" ]]; then
-              echo "::set-output name=passed::true"
+              echo "passed=true" >> ${GITHUB_OUTPUT}
               exit 0
             fi
           fi
-          echo "::set-output name=passed::false"
+          echo "passed=false" >> ${GITHUB_OUTPUT}
           exit 1
