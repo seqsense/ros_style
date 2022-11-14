@@ -111,13 +111,14 @@ jobs:
               python_files+=(${file})
             fi
           done
-          echo "checking ${python_files[@]}"
+          echo "found ${#python_files[@]} python file(s)"
 
           if [ ${#python_files[@]} -eq 0 ]; then
             echo "passed=true" >> ${GITHUB_OUTPUT}
             exit 0
           fi
 
+          echo "checking ${python_files[@]}"
           # workaround to get mypy to figure out the types it should install
           mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
           mypy --install-types --non-interactive
