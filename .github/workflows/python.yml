@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
       - name: Remove ignored paths
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9.5'
           architecture: x64
@@ -84,7 +84,7 @@ jobs:
           persist-credentials: false
       - name: Remove ignored paths
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9.5'
           architecture: x64
