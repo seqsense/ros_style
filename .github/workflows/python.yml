@@ -30,7 +30,7 @@ jobs:
           persist-credentials: false
       - name: Remove ignored paths
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9.5'
           architecture: x64
@@ -84,7 +84,7 @@ jobs:
           persist-credentials: false
       - name: Remove ignored paths
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
-      - uses: actions/setup-python@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.9.5'
           architecture: x64
@@ -95,10 +95,6 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/mypy.ini
-
-          # workaround to get mypy to figure out the types it should install
-          mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
-          mypy --install-types --non-interactive
 
           cmd="mypy --config-file mypy.ini --scripts-are-modules"
 
@@ -115,7 +111,18 @@ jobs:
               python_files+=(${file})
             fi
           done
+          echo "found ${#python_files[@]} python file(s)"
+
+          if [ ${#python_files[@]} -eq 0 ]; then
+            echo "passed=true" >> ${GITHUB_OUTPUT}
+            exit 0
+          fi
+
           echo "checking ${python_files[@]}"
+          # workaround to get mypy to figure out the types it should install
+          mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
+          mypy --install-types --non-interactive
+
           output="$(${cmd} ${python_files[@]} | tee /dev/stderr)"
           result="$(echo "${output}" | tail -n 1)"
 
