@@ -60,6 +60,7 @@ jobs:
   cpp-fail:
     uses: ./.github/workflows/cpp.yml
     with:
+      files: ./test/pass.cpp ./test/fail.cpp
       style-branch: ${{ github.head_ref }}
       continue-on-error: true
   cpp-fail-clang-format:
