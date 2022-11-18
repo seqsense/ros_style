@@ -57,7 +57,7 @@ jobs:
 
           for file in ${files_to_check}; do
             filetype=$(file -b --mime-type ${file})
-            if echo ${filetype} | grep -qE "text/x-python"; then
+            if echo ${filetype} | grep -qE "text/x-python|text/x-script.python"; then
               echo "checking ${file}"
               ${cmd} ${file} \
                 | sed 's|^\(\S\+\):\([0-9]\+\):\([0-9]\+\): \(.*\)$|::error file=\1,line=\2,col=\3::\4\n\0|'
@@ -107,7 +107,7 @@ jobs:
 
           for file in ${files_to_check}; do
             filetype=$(file -b --mime-type ${file})
-            if echo ${filetype} | grep -qE "text/x-python"; then
+            if echo ${filetype} | grep -qE "text/x-python|text/x-script.python"; then
               python_files+=(${file})
             fi
           done
