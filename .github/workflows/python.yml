@@ -119,7 +119,14 @@ jobs:
           fi
 
           echo "checking ${python_files[@]}"
+
+          # install explicitly listed type stub packages
+          if [ -f ".mypy-stub-pkgs" ]; then
+            pip install -r .mypy-stub-pkgs
+          fi
+
           # workaround to get mypy to figure out the types it should install
+          # note that it does not upgrade already installed packages
           mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
           mypy --install-types --non-interactive
 
