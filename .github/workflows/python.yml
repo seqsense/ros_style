@@ -119,9 +119,14 @@ jobs:
           fi
 
           echo "checking ${python_files[@]}"
-          # workaround to get mypy to figure out the types it should install
-          mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
-          mypy --install-types --non-interactive
+
+          if [ -f ".mypy-stub-pkgs" ]; then
+            pip install -r .mypy-stub-pkgs
+          else
+            # workaround to get mypy to figure out the types it should install
+            mypy --config-file mypy.ini . > /dev/null 2> /dev/null || true
+            mypy --install-types --non-interactive
+          fi
 
           output="$(${cmd} ${python_files[@]} | tee /dev/stderr)"
           result="$(echo "${output}" | tail -n 1)"
