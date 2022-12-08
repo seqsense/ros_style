@@ -12,6 +12,8 @@ on:
         default: true
       files:
         type: string
+      extend_ignore:
+        type: string
     outputs:
       passed-lint:
         value: ${{ jobs.lint.outputs.passed }}
@@ -45,6 +47,12 @@ jobs:
         run: |
           curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.flake8
           curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
+
+          # extend_ignore should be a list of comma separated flake8 error codes
+          extend_ignore="${{ inputs.extend_ignore }}"
+          if [ -z "${extend_ignore}" ]; then
+            sed -i "/^ignore/ s/$/, ${extend_ignore}/" .flake8
+          fi
 
           cmd="flake8 --count --show-source --statistics"
 
