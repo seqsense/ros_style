@@ -49,7 +49,7 @@ jobs:
           curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
 
           extend_ignore="${{ inputs.flake8_extend_ignore }}"
-          if [ -z "${extend_ignore}" ]; then
+          if [ -n "${extend_ignore}" ]; then
             sed -i "/^ignore/ s/$/, ${extend_ignore}/" .flake8
           fi
 
