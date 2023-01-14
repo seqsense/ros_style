@@ -134,7 +134,7 @@ jobs:
 
           # workaround to get mypy to figure out the types it should install
           # note that it does not upgrade already installed packages
-          "${cmd} ${python_files[@]}" > /dev/null 2> /dev/null || true
+          $(echo "${cmd} ${python_files[@]}") > /dev/null 2> /dev/null || true
           mypy --install-types --non-interactive
 
           output="$(${cmd} ${python_files[@]} | tee /dev/stderr)"
