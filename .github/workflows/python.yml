@@ -27,7 +27,7 @@ jobs:
       passed: ${{ steps.check.outputs.passed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Remove ignored paths
@@ -86,7 +86,7 @@ jobs:
       passed: ${{ inputs.run-typecheck == 'false' || steps.check.outputs.passed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Remove ignored paths
