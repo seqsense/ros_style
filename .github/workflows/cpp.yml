@@ -1,5 +1,3 @@
-name: ci
-
 on:
   workflow_call:
     inputs:
@@ -47,7 +45,7 @@ jobs:
 
           files_to_check="${{ inputs.files }}"
           if [ -z "${files_to_check}" ]; then
-            files_to_check=$(find . -name "*.cpp" -o -name "*.h")
+            files_to_check=$(find . -name "*.cpp" -o -name "*.h" -o -name "*.hpp")
           fi
 
           (
