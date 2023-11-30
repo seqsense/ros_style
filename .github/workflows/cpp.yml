@@ -12,7 +12,7 @@ on:
         default: true
       cpp-roslint-opts:
         type: string
-        default: --filter=-runtime/references,-build/c++11
+        default: --filter=-runtime/references,-build/c++11 --headers=h,hpp
       files:
         type: string
     outputs:
