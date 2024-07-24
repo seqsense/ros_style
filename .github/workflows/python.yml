@@ -96,7 +96,7 @@ jobs:
           python-version: '3.10'
           architecture: x64
       - name: Install mypy
-        run: pip install --disable-pip-version-check mypy==0.950
+        run: pip install --disable-pip-version-check mypy==1.11.0
       - name: Run mypy
         id: check
         continue-on-error: ${{ inputs.continue-on-error }}
