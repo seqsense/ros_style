@@ -34,7 +34,7 @@ jobs:
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
           architecture: x64
       - name: Install flake8 and plugins
         run: pip install --disable-pip-version-check flake8-black==0.3.5 flake8-isort==5.0.3
@@ -93,7 +93,7 @@ jobs:
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.10'
           architecture: x64
       - name: Install mypy
         run: pip install --disable-pip-version-check mypy==0.950
