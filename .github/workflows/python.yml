@@ -140,7 +140,7 @@ jobs:
           output="$(${cmd} ${python_files[@]} | tee /dev/stderr)"
           result="$(echo "${output}" | tail -n 1)"
 
-          echo "${output}" | sed -n 's|^\(\S\+\):\([0-9]\+\):\([0-9]\+\): error: \(.*\)$|::error file=\1,line=\2,col=\3::\4|p'
+          echo "${output}"
 
           if [[ -n "$result" ]]; then
             error="$(echo $result | awk '/^Found/{print $2}')"
