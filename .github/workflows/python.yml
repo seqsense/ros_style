@@ -103,7 +103,7 @@ jobs:
         run: |
           curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/mypy.ini
 
-          cmd="mypy --config-file mypy.ini --scripts-are-modules"
+          cmd="mypy --config-file mypy.ini --scripts-are-modules --no-namespace-packages"
 
           files_to_check="${{ inputs.files }}"
           if [ -z "${files_to_check}" ]; then
