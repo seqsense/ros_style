@@ -35,7 +35,7 @@ jobs:
         run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
       - name: Install tools
         run: |
-          sudo apt-get install -y clang-format-11
+          sudo apt-get install -y clang-format
           curl -LOJ https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.clang-format
       - name: Format
         id: check
