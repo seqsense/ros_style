@@ -45,8 +45,8 @@ jobs:
         id: check
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
-          curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.flake8
-          curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.flake8
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
 
           extend_ignore="${{ inputs.flake8_extend_ignore }}"
           if [ -n "${extend_ignore}" ]; then
@@ -101,7 +101,7 @@ jobs:
         id: check
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
-          curl -LOJs https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/mypy.ini
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/mypy.ini
 
           cmd="mypy --config-file mypy.ini --scripts-are-modules"
 

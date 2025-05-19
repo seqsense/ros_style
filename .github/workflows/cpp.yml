@@ -36,7 +36,7 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get install -y clang-format
-          curl -LOJ https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.clang-format
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/.clang-format
       - name: Format
         id: check
         continue-on-error: ${{ inputs.continue-on-error }}
