@@ -37,7 +37,7 @@ jobs:
           python-version: '3.10'
           architecture: x64
       - name: Install flake8 and plugins
-        run: pip install --disable-pip-version-check flake8-black==0.3.5 flake8-isort==5.0.3
+        run: pip install --disable-pip-version-check black==25.1.0 flake8-black==0.3.5 flake8-isort==5.0.3
       - name: Install flake8-annotations
         if: inputs.run-typecheck
         run: pip install --disable-pip-version-check flake8-annotations==2.9.1
