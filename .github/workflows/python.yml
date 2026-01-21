@@ -17,6 +17,8 @@ on:
     outputs:
       passed-lint:
         value: ${{ jobs.lint.outputs.passed }}
+      passed-lint-ruff:
+        value: ${{ jobs.lint-ruff.outputs.passed }}
       passed-typecheck:
         value: ${{ jobs.typecheck.outputs.passed }}
 
@@ -79,10 +81,26 @@ jobs:
           fi
 
           exit $exit_code
+
+  lint-ruff:
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.check.outputs.passed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          architecture: x64
       - name: Install ruff
         run: pip install --disable-pip-version-check ruff==0.14.13
       - name: Run ruff
-        id: check-ruff
+        id: check
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
@@ -105,6 +123,7 @@ jobs:
           fi
 
           exit $exit_code
+
   typecheck:
     runs-on: ubuntu-latest
     if: inputs.run-typecheck
