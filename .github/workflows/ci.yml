@@ -11,6 +11,7 @@ jobs:
     with:
       style-branch: ${{ github.head_ref }}
       files: ./test/pass.py
+      run-ruff: true
   python-fail:
     uses: ./.github/workflows/python.yml
     with:
