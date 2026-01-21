@@ -34,6 +34,24 @@ jobs:
             exit 1
             ;;
           esac
+  python-fail-lint-ruff:
+    needs: python-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case "${{ needs.python-fail.outputs.passed-lint-ruff }}" in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-lint-ruff }}"
+            exit 1
+            ;;
+          esac
   python-fail-typecheck:
     needs: python-fail
     runs-on: ubuntu-latest
