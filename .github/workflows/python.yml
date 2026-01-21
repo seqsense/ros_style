@@ -91,7 +91,7 @@ jobs:
 
   lint-ruff:
     runs-on: ubuntu-latest
-    if : inputs.run-ruff
+    if: inputs.run-ruff
     outputs:
       passed: ${{ inputs.run-ruff == 'false' || steps.check.outputs.passed }}
     steps:
