@@ -79,6 +79,32 @@ jobs:
           fi
 
           exit $exit_code
+      - name: Install ruff
+        run: pip install --disable-pip-version-check ruff==0.14.13
+      - name: Run ruff
+        id: check-ruff
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
+          cmd="ruff check --preview --output-format=github"
+
+          files_to_check="${{ inputs.files }}"
+          if [ -z "${files_to_check}" ]; then
+            files_to_check=.
+          fi
+
+          set +e
+          ${cmd} ${files_to_check}
+          exit_code=$?
+          set -e
+
+          if [ ${exit_code} -eq 0 ]; then
+            echo "passed=true" >> ${GITHUB_OUTPUT}
+          else
+            echo "passed=false" >> ${GITHUB_OUTPUT}
+          fi
+
+          exit $exit_code
   typecheck:
     runs-on: ubuntu-latest
     if: inputs.run-typecheck
