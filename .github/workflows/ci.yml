@@ -16,6 +16,7 @@ jobs:
     with:
       style-branch: ${{ github.head_ref }}
       continue-on-error: true
+      run-ruff: true
   python-fail-lint:
     needs: python-fail
     runs-on: ubuntu-latest

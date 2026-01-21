@@ -7,6 +7,12 @@ on:
       continue-on-error:
         type: boolean
         default: false
+      run-flake8:
+        type: boolean
+        default: true
+      run-ruff:
+        type: boolean
+        default: false
       run-typecheck:
         type: boolean
         default: true
@@ -25,8 +31,9 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    if: inputs.run-flake8
     outputs:
-      passed: ${{ steps.check.outputs.passed }}
+      passed: ${{ inputs.run-flake8 == 'false' || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -84,8 +91,9 @@ jobs:
 
   lint-ruff:
     runs-on: ubuntu-latest
+    if : inputs.run-ruff
     outputs:
-      passed: ${{ steps.check.outputs.passed }}
+      passed: ${{ inputs.run-ruff == 'false' || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
