@@ -7,6 +7,12 @@ on:
       continue-on-error:
         type: boolean
         default: false
+      run-flake8:
+        type: boolean
+        default: true
+      run-ruff:
+        type: boolean
+        default: false
       run-typecheck:
         type: boolean
         default: true
@@ -17,14 +23,17 @@ on:
     outputs:
       passed-lint:
         value: ${{ jobs.lint.outputs.passed }}
+      passed-lint-ruff:
+        value: ${{ jobs.lint-ruff.outputs.passed }}
       passed-typecheck:
         value: ${{ jobs.typecheck.outputs.passed }}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    if: inputs.run-flake8
     outputs:
-      passed: ${{ steps.check.outputs.passed }}
+      passed: ${{ inputs.run-flake8 == 'false' || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,6 +88,50 @@ jobs:
           fi
 
           exit $exit_code
+
+  lint-ruff:
+    runs-on: ubuntu-latest
+    if: inputs.run-ruff
+    outputs:
+      passed: ${{ inputs.run-ruff == 'false' || steps.check.outputs.passed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          architecture: x64
+      - name: Install ruff
+        run: pip install --disable-pip-version-check ruff==0.14.13
+      - name: Run ruff
+        id: check
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
+          cmd="ruff check --preview --output-format=github"
+
+          files_to_check="${{ inputs.files }}"
+          if [ -z "${files_to_check}" ]; then
+            files_to_check=.
+          fi
+
+          set +e
+          ${cmd} ${files_to_check}
+          exit_code=$?
+          set -e
+
+          if [ ${exit_code} -eq 0 ]; then
+            echo "passed=true" >> ${GITHUB_OUTPUT}
+          else
+            echo "passed=false" >> ${GITHUB_OUTPUT}
+          fi
+
+          exit $exit_code
+
   typecheck:
     runs-on: ubuntu-latest
     if: inputs.run-typecheck
