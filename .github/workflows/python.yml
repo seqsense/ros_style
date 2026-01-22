@@ -114,7 +114,7 @@ jobs:
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
-          cmd="ruff check --preview --config=${{ inputs.ruff-config-overrides }} --output-format=github"
+          cmd="ruff check --preview --config=\"${{ inputs.ruff-config-overrides }}\" --output-format=github"
 
           files_to_check="${{ inputs.files }}"
           if [ -z "${files_to_check}" ]; then
