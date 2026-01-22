@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.run-roslint }}
     outputs:
-      passed: ${{ inputs.run-roslint == 'false' || steps.check.outputs.passed }}
+      passed: ${{ ! inputs.run-roslint || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
