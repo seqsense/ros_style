@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run-flake8
     outputs:
-      passed: ${{ inputs.run-flake8 == 'false' || steps.check.outputs.passed }}
+      passed: ${{ ! inputs.run-flake8 || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run-ruff
     outputs:
-      passed: ${{ inputs.run-ruff == 'false' || steps.check.outputs.passed }}
+      passed: ${{ ! inputs.run-ruff || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run-typecheck
     outputs:
-      passed: ${{ inputs.run-typecheck == 'false' || steps.check.outputs.passed }}
+      passed: ${{ ! inputs.run-typecheck || steps.check.outputs.passed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
