@@ -111,6 +111,8 @@ jobs:
         run: pip install --disable-pip-version-check ruff==0.14.13
       - name: Run ruff
         id: check
+        env:
+          RUFF_CONFIG_OVERRIDES: ${{ inputs.ruff-config-overrides }}
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
@@ -119,7 +121,7 @@ jobs:
             check
             --preview
             --output-format=github
-            "--config=${{ inputs.ruff-config-overrides }}"
+            "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
           )
 
           files_to_check="${{ inputs.files }}"
