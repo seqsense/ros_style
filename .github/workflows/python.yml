@@ -20,6 +20,8 @@ on:
         type: string
       flake8_extend_ignore: # list of comma separated flake8 error codes
         type: string
+      ruff-config-overrides:
+        type: string
     outputs:
       passed-lint:
         value: ${{ jobs.lint.outputs.passed }}
@@ -109,10 +111,18 @@ jobs:
         run: pip install --disable-pip-version-check ruff==0.14.13
       - name: Run ruff
         id: check
+        env:
+          RUFF_CONFIG_OVERRIDES: ${{ inputs.ruff-config-overrides }}
         continue-on-error: ${{ inputs.continue-on-error }}
         run: |
           curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
-          cmd="ruff check --preview --output-format=github"
+          cmd=(
+            ruff
+            check
+            --preview
+            --output-format=github
+            "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
+          )
 
           files_to_check="${{ inputs.files }}"
           if [ -z "${files_to_check}" ]; then
@@ -120,7 +130,7 @@ jobs:
           fi
 
           set +e
-          ${cmd} ${files_to_check}
+          "${cmd[@]}" ${files_to_check}
           exit_code=$?
           set -e
 
