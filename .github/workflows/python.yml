@@ -119,7 +119,6 @@ jobs:
           cmd=(
             ruff
             check
-            --preview
             --output-format=github
             "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
           )
@@ -152,7 +151,6 @@ jobs:
             ruff
             format
             --check
-            --preview
             "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
           )
 
