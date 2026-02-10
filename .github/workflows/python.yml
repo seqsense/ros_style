@@ -151,6 +151,7 @@ jobs:
             ruff
             format
             --check
+            --output-format=github
             "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
           )
 
