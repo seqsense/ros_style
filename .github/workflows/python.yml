@@ -95,7 +95,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.run-ruff
     outputs:
-      passed: ${{ ! inputs.run-ruff || steps.check.outputs.passed }}
+      passed: ${{ ! inputs.run-ruff || (steps.check.outputs.passed == 'true' && steps.format-check.outputs.passed == 'true') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -119,7 +119,38 @@ jobs:
           cmd=(
             ruff
             check
-            --preview
+            --output-format=github
+            "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
+          )
+
+          files_to_check="${{ inputs.files }}"
+          if [ -z "${files_to_check}" ]; then
+            files_to_check=.
+          fi
+
+          set +e
+          "${cmd[@]}" ${files_to_check}
+          exit_code=$?
+          set -e
+
+          if [ ${exit_code} -eq 0 ]; then
+            echo "passed=true" >> ${GITHUB_OUTPUT}
+          else
+            echo "passed=false" >> ${GITHUB_OUTPUT}
+          fi
+
+          exit $exit_code
+      - name: Run ruff format
+        id: format-check
+        if: success() || failure() # Run even if ruff check fails, but not on cancellation
+        env:
+          RUFF_CONFIG_OVERRIDES: ${{ inputs.ruff-config-overrides }}
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          cmd=(
+            ruff
+            format
+            --check
             --output-format=github
             "--config=${{ env.RUFF_CONFIG_OVERRIDES }}"
           )
