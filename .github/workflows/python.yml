@@ -287,6 +287,8 @@ jobs:
           exit_code=$?
           set -e
 
+          echo exit_code=${exit_code}
+
           if [ ${exit_code} -eq 0 ]; then
             echo "passed=true" >> ${GITHUB_OUTPUT}
           else
