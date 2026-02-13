@@ -284,10 +284,11 @@ jobs:
             code=$?
             echo code=${code}
             exit_code=$(($exit_code | $code))
+            echo exit_code=${exit_code}
           done
           set -e
 
-          echo exit_code=${exit_code}
+          echo result exit_code=${exit_code}
 
           if [ ${exit_code} -eq 0 ]; then
             echo "passed=true" >> ${GITHUB_OUTPUT}
