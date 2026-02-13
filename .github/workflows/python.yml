@@ -275,12 +275,27 @@ jobs:
         run: |
           curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
 
-          # files_to_check is not supported.
+          files_to_check="${{ inputs.files }}"
+          if [ -z "${files_to_check}" ]; then
+            files_to_check=.
+          fi
 
           set +e
           exit_code=0
           for f in $(find . -maxdepth 2 -name pyproject.toml); do
-            (cd "$(dirname "$f")" && ty check . --output-format=github)
+            # If none of files_to_check is in this directory, skip
+            dir=$(dirname "$f")
+            has_file_in_dir=false
+            for file in "${files_to_check}""; do
+              if [[ "$file" == "$dir"* ]]; then
+                has_file_in_dir=true
+                break
+              fi
+            done
+            if [ "$has_file_in_dir" = false ]; then
+              continue
+            fi
+            (cd "$dir" && ty check . --output-format=github)
             code=$?
             exit_code=$(($exit_code | $code))
           done
