@@ -12,12 +12,14 @@ jobs:
       style-branch: ${{ github.head_ref }}
       files: ./test/pass.py
       run-ruff: true
+      run-ty: true
   python-fail:
     uses: ./.github/workflows/python.yml
     with:
       style-branch: ${{ github.head_ref }}
       continue-on-error: true
       run-ruff: true
+      run-ty: true
   python-fail-lint:
     needs: python-fail
     runs-on: ubuntu-latest
@@ -69,6 +71,24 @@ jobs:
             ;;
           *)
             echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-typecheck }}"
+            exit 1
+            ;;
+          esac
+  python-fail-typecheck-ty:
+    needs: python-fail
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        run: |
+          case "${{ needs.python-fail.outputs.passed-typecheck-ty }}" in
+          true)
+            echo "::error::Unexpected success"
+            exit 1
+            ;;
+          false)
+            ;;
+          *)
+            echo "::error::Unknown result: ${{ needs.python-fail.outputs.passed-typecheck-ty }}"
             exit 1
             ;;
           esac
