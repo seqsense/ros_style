@@ -304,8 +304,6 @@ jobs:
           done
           set -e
 
-          echo result exit_code=${exit_code}
-
           if [ ${exit_code} -eq 0 ]; then
             echo "passed=true" >> ${GITHUB_OUTPUT}
           else
