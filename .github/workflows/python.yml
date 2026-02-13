@@ -283,19 +283,22 @@ jobs:
           set +e
           exit_code=0
           for f in $(find . -maxdepth 2 -name pyproject.toml); do
-            # If none of files_to_check is in this directory, skip
             dir=$(dirname "$f")
-            has_file_in_dir=false
-            for file in "${files_to_check}""; do
-              if [[ "$file" == "$dir"* ]]; then
-                has_file_in_dir=true
-                break
-              fi
-            done
-            if [ "$has_file_in_dir" = false ]; then
+            files_to_check_in_dir=()
+            if [[ "${files_to_check}" == "." ]]; then
+              files_to_check_in_dir+=("$dir")
+            else
+              for file in "${files_to_check}"; do
+                if [[ "$file" == "$dir"* ]]; then
+                  files_to_check_in_dir+=("$file")
+                fi
+              done
+            fi
+            # If none of files_to_check is in this directory, skip
+            if [ "${#files_to_check_in_dir[@]}" -eq 0 ]; then
               continue
             fi
-            (cd "$dir" && ty check . --output-format=github)
+            (cd "$dir" && ty check "${files_to_check_in_dir[@]}" --output-format=github)
             code=$?
             exit_code=$(($exit_code | $code))
           done
