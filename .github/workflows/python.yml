@@ -279,7 +279,7 @@ jobs:
 
           set +e
           exit_code=0
-          find . -maxdepth 2 -name pyproject.toml | while read -r f; do
+          for f in $(find . -maxdepth 2 -name pyproject.toml); do
             (cd "$(dirname "$f")" && ty check . --output-format=github)
             code=$?
             echo code=${code}
