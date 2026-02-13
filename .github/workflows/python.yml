@@ -285,7 +285,6 @@ jobs:
             echo code=${code}
             exit_code=$(($exit_code | $code))
           done
-          exit_code=$?
           set -e
 
           echo exit_code=${exit_code}
