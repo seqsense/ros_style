@@ -16,6 +16,9 @@ on:
       run-typecheck:
         type: boolean
         default: true
+      run-ty:
+        type: boolean
+        default: false
       files:
         type: string
       flake8_extend_ignore: # list of comma separated flake8 error codes
@@ -29,6 +32,8 @@ on:
         value: ${{ jobs.lint-ruff.outputs.passed }}
       passed-typecheck:
         value: ${{ jobs.typecheck.outputs.passed }}
+      passed-typecheck-ty:
+        value: ${{ jobs.typecheck-ty.outputs.passed }}
 
 jobs:
   lint:
@@ -245,3 +250,44 @@ jobs:
           fi
           echo "passed=false" >> ${GITHUB_OUTPUT}
           exit 1
+
+  typecheck-ty:
+    runs-on: ubuntu-latest
+    if: inputs.run-ty
+    outputs:
+      passed: ${{ ! inputs.run-ty || steps.check.outputs.passed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Remove ignored paths
+        run: find . -name .lint-ignore | xargs dirname | xargs rm -rf
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+          architecture: x64
+      - name: Install ty
+        run: pip install --disable-pip-version-check ty==0.0.16
+      - name: Run ty
+        id: check
+        continue-on-error: ${{ inputs.continue-on-error }}
+        run: |
+          curl -LOJs --fail --show-error https://raw.githubusercontent.com/seqsense/ros_style/${{ inputs.style-branch }}/pyproject.toml
+
+          # files_to_check is not supported.
+
+          cmd="find . -maxdepth 2 -name pyproject.toml -execdir ty check . --output-format=github \;"
+
+          set +e
+          ${cmd}
+          exit_code=$?
+          set -e
+
+          if [ ${exit_code} -eq 0 ]; then
+            echo "passed=true" >> ${GITHUB_OUTPUT}
+          else
+            echo "passed=false" >> ${GITHUB_OUTPUT}
+          fi
+
+          exit $exit_code
