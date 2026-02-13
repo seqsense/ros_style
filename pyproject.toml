@@ -6,6 +6,7 @@ preview = true
 select = ["E4", "E7", "E9", "F", "I", "E3"]
 
 [tool.ty.rules]
+possibly-missing-attribute = "error"
 unresolved-import = "ignore"
 unused-type-ignore-comment = "ignore"
 
