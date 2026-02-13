@@ -282,6 +282,7 @@ jobs:
           find . -maxdepth 2 -name pyproject.toml | while read -r f; do
             (cd "$(dirname "$f")" && ty check . --output-format=github)
             code=$?
+            echo code=${code}
             exit_code=$(($exit_code | $code))
           done
           exit_code=$?
