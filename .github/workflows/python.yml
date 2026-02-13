@@ -278,7 +278,12 @@ jobs:
           # files_to_check is not supported.
 
           set +e
-          find . -maxdepth 2 -name pyproject.toml -execdir ty check . --output-format=github \;
+          exit_code=0
+          find . -maxdepth 2 -name pyproject.toml | while read -r f; do
+            (cd "$(dirname "$f")" && ty check . --output-format=github)
+            code=$?
+            exit_code=$(($exit_code | $code))
+          done
           exit_code=$?
           set -e
 
