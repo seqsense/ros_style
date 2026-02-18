@@ -282,11 +282,14 @@ jobs:
 
           set +e
           exit_code=0
-          for f in $(find . -maxdepth 2 -name pyproject.toml); do
-            dir=$(dirname "$f")
+          mapfile -t package_dirs < <(find . -maxdepth 2 -name package.xml -exec dirname {} \; | sort -u)
+          if [ ${#package_dirs[@]} -eq 0 ]; then
+            package_dirs=(".")
+          fi
+          for dir in "${package_dirs[@]}"; do
             files_to_check_in_dir=()
             if [[ "${files_to_check}" == "." ]]; then
-              files_to_check_in_dir+=("$dir")
+              files_to_check_in_dir+=(".")
             else
               for file in "${files_to_check}"; do
                 if [[ "$file" == "$dir"* ]]; then
@@ -298,9 +301,10 @@ jobs:
             if [ "${#files_to_check_in_dir[@]}" -eq 0 ]; then
               continue
             fi
+            echo "Checking ${dir}"
             (cd "$dir" && ty check "${files_to_check_in_dir[@]}" --output-format=github)
             code=$?
-            exit_code=$(($exit_code | $code))
+            exit_code=$((exit_code | code))
           done
           set -e
 
