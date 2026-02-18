@@ -277,35 +277,12 @@ jobs:
 
           files_to_check="${{ inputs.files }}"
           if [ -z "${files_to_check}" ]; then
-            files_to_check=.
+            files_to_check="."
           fi
 
           set +e
-          exit_code=0
-          mapfile -t package_dirs < <(find . -maxdepth 2 -name package.xml -exec dirname {} \; | sort -u)
-          if [ ${#package_dirs[@]} -eq 0 ]; then
-            package_dirs=(".")
-          fi
-          for dir in "${package_dirs[@]}"; do
-            files_to_check_in_dir=()
-            if [[ "${files_to_check}" == "." ]]; then
-              files_to_check_in_dir+=(".")
-            else
-              for file in "${files_to_check}"; do
-                if [[ "$file" == "$dir"* ]]; then
-                  files_to_check_in_dir+=("$file")
-                fi
-              done
-            fi
-            # If none of files_to_check is in this directory, skip
-            if [ "${#files_to_check_in_dir[@]}" -eq 0 ]; then
-              continue
-            fi
-            echo "Checking ${dir}"
-            (cd "$dir" && ty check "${files_to_check_in_dir[@]}" --output-format=github)
-            code=$?
-            exit_code=$((exit_code | code))
-          done
+          ty check "${files_to_check}" --output-format=github
+          exit_code=$?
           set -e
 
           if [ ${exit_code} -eq 0 ]; then
