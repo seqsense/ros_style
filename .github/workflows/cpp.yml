@@ -12,7 +12,10 @@ on:
         default: true
       cpp-roslint-opts:
         type: string
-        default: --filter=-runtime/references,-build/c++11 --headers=h,hpp
+        default: --filter=-runtime/references,-build/c++11,-whitespace/braces --headers=h,hpp
+        # -runtime/references: robotics-related libraries (e.g., ROS/PCL) often use non-const reference arguments to receive outputs
+        # -build/c++11: we decided to use all C++11 features
+        # -whitespace/braces: this conflicts with clang-format results, and whitespace format is checked by clang-format in this workflow
       files:
         type: string
     outputs:
